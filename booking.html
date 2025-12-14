@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        .note {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .note strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+
+        <a href="admin.html" style="position: absolute; top: 7px; padding: 10px;">Dashboard</a>
+
+    <div class="container">
+        <h1>📅 Book Appointment</h1>
+        
+        <div id="successMessage" class="success-message">
+            ✓ Appointment booked successfully!
+        </div>
+        
+        <form id="appointmentForm">
+            <div class="form-group">
+                <label for="name">Patient Name *</label>
+                <input type="text" id="name" required placeholder="Enter your full name">
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Department *</label>
+                <select id="department" required>
+                    <option value="">Select Department</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="General Medicine">General Medicine</option>
+                    <option value="Dentistry">Dentistry</option>
+                    <option value="ENT">ENT</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="doctor">Doctor Name *</label>
+                <input type="text" id="doctor" required placeholder="Enter doctor's name">
+            </div>
+            
+            <div class="form-group">
+                <label for="date">Appointment Date *</label>
+                <input type="date" id="date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="time">Appointment Time *</label>
+                <input type="time" id="time" required>
+            </div>
+            
+            <button type="submit" class="btn">Book Appointment</button>
+        </form>
+        
+        <div class="note">
+            <strong>Note:</strong> Save this page as <strong>booking.html</strong> and the admin panel as <strong>admin.html</strong> in the same folder to use the complete system.
+        </div>
+    </div>
+    
+    <script>
+        // Set minimum date to today
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+        
+        // Handle form submission
+        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const appointment = {
+                id: Date.now(),
+                name: document.getElementById('name').value,
+                department: document.getElementById('department').value,
+                doctor: document.getElementById('doctor').value,
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value,
+                status: 'Pending',
+                bookedOn: new Date().toISOString()
+            };
+            
+            // Get existing appointments from localStorage
+            let appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
+            
+            // Add new appointment
+            appointments.push(appointment);
+            
+            // Save to localStorage
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+            
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.style.display = 'block';
+            
+            // Reset form
+            this.reset();
+            
+            // Hide success message after 3 seconds
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
